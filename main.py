@@ -23,37 +23,36 @@ try:
 except Exception as e:
     print('Error reading document:', e)
 
-breakpoint()
 is_facial = doc_ref.get().to_dict()["facial"] == True
 
-# Get a reference to webcam #0 (the default one)
-video_capture = cv2.VideoCapture('example2.mp4')
-
-# Load a sample picture and learn how to recognize it.
-obama_image = face_recognition.load_image_file("linda.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
-
-# Load a second sample picture and learn how to recognize it.
-biden_image = face_recognition.load_image_file("stanley.jpg")
-biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
-
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    obama_face_encoding,
-    biden_face_encoding
-]
-known_face_names = [
-    "Linda He",
-    "Stanley Yang"
-]
-
-# Initialize some variables
-face_locations = []
-face_encodings = []
-face_names = []
-process_this_frame = True
-
 def facial_recognition(): 
+    # Get a reference to webcam #0 (the default one)
+    video_capture = cv2.VideoCapture('example2.mp4')
+
+    # Load a sample picture and learn how to recognize it.
+    obama_image = face_recognition.load_image_file("linda.jpg")
+    obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+
+    # Load a second sample picture and learn how to recognize it.
+    biden_image = face_recognition.load_image_file("stanley.jpg")
+    biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
+
+    # Create arrays of known face encodings and their names
+    known_face_encodings = [
+        obama_face_encoding,
+        biden_face_encoding
+    ]
+    known_face_names = [
+        "Linda He",
+        "Stanley Yang"
+    ]
+
+    # Initialize some variables
+    face_locations = []
+    face_encodings = []
+    face_names = []
+    process_this_frame = True
+
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
@@ -118,6 +117,10 @@ def facial_recognition():
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+    
+    video_capture.release()
+    cv2.destroyAllWindows()
+    
     return name
 
 if is_facial: 
@@ -128,8 +131,7 @@ else:
 
 
 # Release handle to the webcam
-video_capture.release()
-cv2.destroyAllWindows()
+
 
 #------------------------------------------------Handling firebases------------------------------------------------
 
