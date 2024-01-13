@@ -19,3 +19,7 @@ try:
         print('No such document!')
 except Exception as e:
     print('Error reading document:', e)
+
+
+is_facial = doc_ref.get().to_dict()["facial"] == True
+print(is_facial)

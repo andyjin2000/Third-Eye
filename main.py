@@ -1,24 +1,30 @@
 import face_recognition
 import cv2
 import numpy as np
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+ 
+# Initialize Firebase
+cred = credentials.Certificate('service_accnt_creds.json')
+firebase_admin.initialize_app(cred)
 
-# # Import database module.
-# from firebase_admin import db
+# Access Firestore
+db = firestore.client()
 
-# # Get a database reference to our posts
-# ref = db.reference('server/saving-data/fireblog/posts')
+# Read data
+doc_ref = db.collection('garbage').document('garbage')
+try:
+    doc = doc_ref.get()
+    if doc.exists:
+        print('Document data:', doc.to_dict())
+    else:
+        print('No such document!')
+except Exception as e:
+    print('Error reading document:', e)
 
-# # Read the data at the posts reference (this is a blocking operation)
-# print(ref.get())
-
-# This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
-# other example, but it includes some basic performance tweaks to make things run a lot faster:
-#   1. Process each video frame at 1/4 resolution (though still display it at full resolution)
-#   2. Only detect faces in every other frame of video.
-
-# PLEASE NOTE: This example requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
-# OpenCV is *not* required to use the face_recognition library. It's only required if you want to run this
-# specific demo. If you have trouble installing it, try any of the other demos that don't require it instead.
+breakpoint()
+is_facial = doc_ref.get().to_dict()["facial"] == True
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture('example2.mp4')
@@ -116,17 +122,7 @@ while True:
 video_capture.release()
 cv2.destroyAllWindows()
 
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-
 #------------------------------------------------Handling firebases------------------------------------------------
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate('service_accnt_creds.json')
-firebase_admin.initialize_app(cred)
-
-# Access Firestore
-db = firestore.client()
 
 # Add data
 doc_ref = db.collection('face_recognition_names').document('names')
