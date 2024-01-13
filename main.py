@@ -7,6 +7,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+import time
 
 # Initialize Firebase
 cred = credentials.Certificate('service_accnt_creds.json')
@@ -30,7 +31,14 @@ is_facial = doc_ref.get().to_dict()["facial"] == True
 
 def call_recognition(): 
     # Get a reference to webcam #0 (the default one)
-    video_capture = cv2.VideoCapture('rtmp://global-live.mux.com/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
+    # video_capture = cv2.VideoCapture('rtmp://global-live.mux.com/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
+    ret = None
+    while not ret:
+        print("Trying to get video capture")
+        video_capture = cv2.VideoCapture('rtmp://global-live.mux.com:5222/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
+        ret, frame = video_capture.read()
+        time.sleep(5)
+    print("Succeeded!")
 
     # Load a sample picture and learn how to recognize it.
     linda_image = face_recognition.load_image_file("linda.jpg")
@@ -179,7 +187,7 @@ def call_recognition():
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
         # Display the resulting image
-        cv2.imshow('Video', frame)
+        # cv2.imshow('Video', frame)
 
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
