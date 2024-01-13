@@ -118,10 +118,10 @@ def facial_recognition():
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+    return name
 
 if is_facial: 
-    facial_recognition()
+    name = facial_recognition()
 else: 
     # object_detection()
     pass
