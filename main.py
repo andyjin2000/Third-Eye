@@ -30,21 +30,36 @@ def facial_recognition():
     video_capture = cv2.VideoCapture('example2.mp4')
 
     # Load a sample picture and learn how to recognize it.
-    obama_image = face_recognition.load_image_file("linda.jpg")
-    obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+    linda_image = face_recognition.load_image_file("linda.jpg")
+    linda_face_encoding = face_recognition.face_encodings(linda_image)[0]
 
     # Load a second sample picture and learn how to recognize it.
-    biden_image = face_recognition.load_image_file("stanley.jpg")
-    biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
+    stanley_image = face_recognition.load_image_file("stanley.jpg")
+    stanley_face_encoding = face_recognition.face_encodings(stanley_image)[0]
+
+    jenny_image = face_recognition.load_image_file("jenny.jpg")
+    jenny_face_encoding = face_recognition.face_encodings(jenny_image)[0]
+
+    andy_image = face_recognition.load_image_file("andy.jpg")
+    andy_face_encoding = face_recognition.face_encodings(andy_image)[0]
+
+    nikhil_image = face_recognition.load_image_file("nikhil.jpg")
+    nikhil_face_encoding = face_recognition.face_encodings(nikhil_image)[0]
 
     # Create arrays of known face encodings and their names
     known_face_encodings = [
-        obama_face_encoding,
-        biden_face_encoding
+        linda_face_encoding,
+        stanley_face_encoding,
+        nikhil_face_encoding,
+        jenny_face_encoding,
+        andy_face_encoding
     ]
     known_face_names = [
-        "Linda He",
-        "Stanley Yang"
+        "Linda",
+        "Stanley", 
+        "Nikhil", 
+        "Jenny", 
+        "Andy"
     ]
 
     # Initialize some variables
@@ -129,7 +144,32 @@ else:
     # object_detection()
     pass
 
+class Memory:
+    def __init__(self, name, description):
+        self.name = name
+        # context = number of interactions
+        self.context = 0
+        self.description = description
+    
+    def increment_context(self): 
+        self.context += 1 
+    
+    def get_context(self): 
+        return self.context
 
+    def get_name(self): 
+        return self.name
+
+    def get_description(self): 
+        return self.description
+
+linda = Memory("Linda", "Pronouns: She/her. Freshman at Harvard. CS Major. Interested in Sebastion Thrun (not like that)")
+stanley = Memory("Stanley", "Pronouns: He/him. Junior at Stanford. CS Major. Interested in Sebastion Thrun (not like that)")
+jenny = Memory("Jenny", "Pronouns: He/him. Junior at Stanford. CS Major. Interested in Sebastion Thrun (not like that)")
+nikhil = Memory("Nikhil", "Pronouns: He/him. Junior at Stanford. CS Major. Interested in Sebastion Thrun (not like that)")
+andy = Memory("Andy", "Pronouns: He/him. Junior at Stanford. CS Major. Interested in Sebastion Thrun (not like that)")
+
+    
 # Release handle to the webcam
 
 
