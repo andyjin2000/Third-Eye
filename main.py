@@ -27,8 +27,6 @@ try:
 except Exception as e:
     print('Error reading document:', e)
 
-is_facial = doc_ref.get().to_dict()["facial"] == True
-
 def call_recognition(): 
     # Get a reference to webcam #0 (the default one)
     # video_capture = cv2.VideoCapture('rtmp://global-live.mux.com/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
@@ -96,6 +94,8 @@ def call_recognition():
 
     while True:
         # Grab a single frame of video
+        is_facial = doc_ref.get().to_dict()["facial"] == True
+
         count += 1
         ret, frame = video_capture.read()
         if frame is None: 
@@ -164,6 +164,10 @@ def call_recognition():
                     if matches[best_match_index]:
                         name = known_face_names[best_match_index]
                         print(name)
+                        doc_ref = db.collection('face_recognition_names').document('names')
+                        doc_ref.set({
+                            'name_output': name
+                        })
 
                     face_names.append(name)
 
@@ -237,7 +241,3 @@ andy = Memory("Andy", "Pronouns: He/him. Junior at Stanford. CS Major. Intereste
 #------------------------------------------------Handling firebases------------------------------------------------
 
 # Add data
-doc_ref = db.collection('face_recognition_names').document('names')
-doc_ref.set({
-    'name_output': name
-})
