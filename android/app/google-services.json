@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "810159114511",
+    "project_id": "mux-starter-ldo0e8",
+    "storage_bucket": "mux-starter-ldo0e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810159114511:android:4546c251c5647a3596167a",
+        "android_client_info": {
+          "package_name": "io.flutterflow.livevideostream"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810159114511-u7bnt3k9ojvsvn84ufm4tr70aoq77b0a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs9btITrzN_zkaqNuZ_exb0pshXuddb-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810159114511-u7bnt3k9ojvsvn84ufm4tr70aoq77b0a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810159114511-da0ot738s1bejprhppffq30p2j1m0jev.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.flutterflow.livevideostream"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
