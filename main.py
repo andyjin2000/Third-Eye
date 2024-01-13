@@ -37,8 +37,8 @@ known_face_encodings = [
     biden_face_encoding
 ]
 known_face_names = [
-    "Barack Obama",
-    "Joe Biden"
+    "Linda He",
+    "Stanley Yang"
 ]
 
 # Initialize some variables
@@ -50,6 +50,8 @@ process_this_frame = True
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
+    if frame is None: 
+        break
 
     # Only process every other frame of video to save time
     if process_this_frame:
@@ -113,3 +115,21 @@ while True:
 # Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+#------------------------------------------------Handling firebases------------------------------------------------
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate('service_accnt_creds.json')
+firebase_admin.initialize_app(cred)
+
+# Access Firestore
+db = firestore.client()
+
+# Add data
+doc_ref = db.collection('face_recognition_names').document('names')
+doc_ref.set({
+    'name_output': name
+})
