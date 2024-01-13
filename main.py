@@ -30,7 +30,7 @@ is_facial = doc_ref.get().to_dict()["facial"] == True
 
 def call_recognition(): 
     # Get a reference to webcam #0 (the default one)
-    video_capture = cv2.VideoCapture('example2.mp4')
+    video_capture = cv2.VideoCapture('rtmp://global-live.mux.com/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
 
     # Load a sample picture and learn how to recognize it.
     linda_image = face_recognition.load_image_file("linda.jpg")
@@ -83,17 +83,21 @@ def call_recognition():
                 ]
     model = YOLO("yolo-Weights/yolov8n.pt")
 
+    count = 0
+    frequency = 10
+
     while True:
         # Grab a single frame of video
+        count += 1
         ret, frame = video_capture.read()
         if frame is None: 
             break
 
         # Only process every other frame of video to save time
-        if process_this_frame:
+        if count % frequency == 0:
 
-            # if not is_facial:
-            if is_facial:
+            if not is_facial:
+            # if is_facial:
                 results = model(frame, stream=True)
                 for r in results:
                     boxes = r.boxes
