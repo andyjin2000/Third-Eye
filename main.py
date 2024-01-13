@@ -23,7 +23,7 @@ from ultralytics import YOLO
 # specific demo. If you have trouble installing it, try any of the other demos that don't require it instead.
 
 # Get a reference to webcam #0 (the default one)
-video_capture = cv2.VideoCapture('example2.mp4')
+video_capture = cv2.VideoCapture('rtmp://global-live.mux.com/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
 
 # Load a sample picture and learn how to recognize it.
 obama_image = face_recognition.load_image_file("linda.jpg")
@@ -81,7 +81,7 @@ while True:
                     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2) # convert to int values
 
                     # put box in cam
-                    cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 3)
 
                     # confidence
                     confidence = math.ceil((box.conf[0]*100))/100
@@ -98,7 +98,7 @@ while True:
                     color = (255, 0, 0)
                     thickness = 2
 
-                    cv2.putText(img, classNames[cls], org, font, fontScale, color, thickness)
+                    cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
 
         else:
             # Resize frame of video to 1/4 size for faster face recognition processing
