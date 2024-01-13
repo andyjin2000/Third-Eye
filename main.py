@@ -1,6 +1,8 @@
+import math
 import face_recognition
 import cv2
 import numpy as np
+from ultralytics import YOLO
 
 # # Import database module.
 # from firebase_admin import db
@@ -46,43 +48,89 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
+              "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
+              "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
+              "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
+              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+              "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
+              "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed",
+              "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
+              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
+              "teddy bear", "hair drier", "toothbrush"
+              ]
+model = YOLO("yolo-Weights/yolov8n.pt").cuda()
 
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
+    if not ret:
+        break
+    should_use_yolo = True
 
     # Only process every other frame of video to save time
     if process_this_frame:
-        # Resize frame of video to 1/4 size for faster face recognition processing
-        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-
-        # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-        # rgb_small_frame = small_frame[:, :, ::-1]
-        rgb_small_frame = np.ascontiguousarray(small_frame[:, :, ::-1])
-        # rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
         
-        # Find all the faces and face encodings in the current frame of video
-        face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        if should_use_yolo:
+            results = model(frame, stream=True)
+            for r in results:
+                boxes = r.boxes
+                for box in boxes:
+                    # bounding box
+                    x1, y1, x2, y2 = box.xyxy[0]
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2) # convert to int values
 
-        face_names = []
-        for face_encoding in face_encodings:
-            # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-            name = "Unknown"
+                    # put box in cam
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
 
-            # # If a match was found in known_face_encodings, just use the first one.
-            # if True in matches:
-            #     first_match_index = matches.index(True)
-            #     name = known_face_names[first_match_index]
+                    # confidence
+                    confidence = math.ceil((box.conf[0]*100))/100
+                    print("Confidence --->",confidence)
 
-            # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+                    # class name
+                    cls = int(box.cls[0])
+                    print("Class name -->", classNames[cls])
 
-            face_names.append(name)
+                    # object details
+                    org = [x1, y1]
+                    font = cv2.FONT_HERSHEY_SIMPLEX
+                    fontScale = 1
+                    color = (255, 0, 0)
+                    thickness = 2
+
+                    cv2.putText(img, classNames[cls], org, font, fontScale, color, thickness)
+
+        else:
+            # Resize frame of video to 1/4 size for faster face recognition processing
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+            
+            # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+            # rgb_small_frame = small_frame[:, :, ::-1]
+            rgb_small_frame = np.ascontiguousarray(small_frame[:, :, ::-1])
+            # rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+            
+            # Find all the faces and face encodings in the current frame of video
+            face_locations = face_recognition.face_locations(rgb_small_frame)
+            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+            face_names = []
+            for face_encoding in face_encodings:
+                # See if the face is a match for the known face(s)
+                matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                name = "Unknown"
+
+                # # If a match was found in known_face_encodings, just use the first one.
+                # if True in matches:
+                #     first_match_index = matches.index(True)
+                #     name = known_face_names[first_match_index]
+
+                # Or instead, use the known face with the smallest distance to the new face
+                face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                best_match_index = np.argmin(face_distances)
+                if matches[best_match_index]:
+                    name = known_face_names[best_match_index]
+
+                face_names.append(name)
 
     process_this_frame = not process_this_frame
 
@@ -104,7 +152,7 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    # cv2.imshow('Video', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
