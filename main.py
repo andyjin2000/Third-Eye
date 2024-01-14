@@ -135,10 +135,12 @@ def call_recognition():
 
                         cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
 
-                        if cls == "suitcase":
-                            db.collection('object_detection').document('names').set({
-                                'detected': "did you check in for your flight?"
-                            })
+                        # if classNames[cls] == "suitcase":
+                        db.collection('object_detection1').document('names').set({
+                            'detected': classNames[cls]
+                        })
+
+                        break
                             # doc_ref = db.collection('face_recognition_names').document('names')
                             # doc_ref.set({
                             #     'name_output': name
