@@ -16,18 +16,18 @@ firebase_admin.initialize_app(cred)
 # Access Firestore
 db = firestore.client()
 
-# Read data
-doc_ref = db.collection('garbage').document('garbage')
-try:
-    doc = doc_ref.get()
-    if doc.exists:
-        print('Document data:', doc.to_dict())
-    else:
-        print('No such document!')
-except Exception as e:
-    print('Error reading document:', e)
 
 def call_recognition(): 
+    # Read data
+    doc_ref = db.collection('garbage').document('garbage')
+    try:
+        doc = doc_ref.get()
+        if doc.exists:
+            print('Document data:', doc.to_dict())
+        else:
+            print('No such document!')
+    except Exception as e:
+        print('Error reading document:', e)
     # Get a reference to webcam #0 (the default one)
     # video_capture = cv2.VideoCapture('rtmp://global-live.mux.com/app/c6b6776b-450f-4e60-df73-ac6b146d0517')
     ret = None
@@ -87,7 +87,7 @@ def call_recognition():
                 "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
                 "teddy bear", "hair drier", "toothbrush"
                 ]
-    model = YOLO("yolo-Weights/yolov8n.pt")
+    model = YOLO("yolo-Weights/yolov8n.pt").cuda()
 
     count = 0
     frequency = 10
@@ -99,6 +99,7 @@ def call_recognition():
         count += 1
         ret, frame = video_capture.read()
         if frame is None: 
+            print("Failed")
             break
 
         # Only process every other frame of video to save time
@@ -134,6 +135,14 @@ def call_recognition():
 
                         cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
 
+                        if cls == "suitcase":
+                            db.collection('object_detection').document('names').set({
+                                'detected': "did you check in for your flight?"
+                            })
+                            # doc_ref = db.collection('face_recognition_names').document('names')
+                            # doc_ref.set({
+                            #     'name_output': name
+                            # })
             else:
                 # Resize frame of video to 1/4 size for faster face recognition processing
                 small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -164,8 +173,7 @@ def call_recognition():
                     if matches[best_match_index]:
                         name = known_face_names[best_match_index]
                         print(name)
-                        doc_ref = db.collection('face_recognition_names').document('names')
-                        doc_ref.set({
+                        db.collection('face_recognition_names').document('names').set({
                             'name_output': name
                         })
 
@@ -201,13 +209,13 @@ def call_recognition():
     video_capture.release()
     cv2.destroyAllWindows()
     
-    return name
+    # return name
 
-if is_facial: 
-    name = call_recognition()
-else: 
-    # object_detection()
-    pass
+# if is_facial: 
+name = call_recognition()
+# else: 
+#     # object_detection()
+#     pass
 
 class Memory:
     def __init__(self, name, description):
